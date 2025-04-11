@@ -28,9 +28,13 @@ spring:
     name: Dev Test
 
   logging:
-  level:
-    root: INFO
-    uk.gov.hmcts.reform.dev: DEBUG
+    level:
+      root: INFO
+      uk.gov.hmcts.reform.dev: DEBUG
+      uk.gov.hmcts.reform.dev.controllers: DEBUG
+      uk.gov.hmcts.reform.dev.services: DEBUG
+    pattern:
+      console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 #  datasource:
 #    driver-class-name: org.postgresql.Driver
 #    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}${DB_OPTIONS:}
