@@ -1,13 +1,18 @@
 package uk.gov.hmcts.reform.dev.models;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,6 +32,7 @@ public class Task {
     @NotNull(message = "Status is mandatory")
     private String status;
 
+    @CreationTimestamp
     @NotNull(message = "Create date/time is mandatory")
     private LocalDateTime createdDate;
 
