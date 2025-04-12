@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.reform.dev.dto.TaskDTO;
 import uk.gov.hmcts.reform.dev.exceptions.TaskNotFoundException;
+import uk.gov.hmcts.reform.dev.exceptions.ValidationException;
 import uk.gov.hmcts.reform.dev.models.Task;
 import uk.gov.hmcts.reform.dev.repositories.TaskRepository;
 
@@ -23,30 +24,21 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    /**
-     * Create a new task.
-     *
-     * @param taskDTO Task data transfer object.
-     * @return Created TaskDTO.
-     */
+    // Create a new task with validation
     @Transactional
     public TaskDTO createTask(TaskDTO taskDTO) {
         logger.info("[TaskService][CREATE TASK] Creating task with title: {}", taskDTO.getTitle());
-        validateTaskDTO(taskDTO);
+        validateTaskDTO(taskDTO); // Validate input
         Task task = mapToEntity(taskDTO);
         Task savedTask = taskRepository.save(task);
         logger.info("[TaskService][CREATE TASK] Task created successfully with ID: {}", savedTask.getId());
         return mapToDTO(savedTask);
     }
 
-    /**
-     * Retrieve a task by its ID.
-     *
-     * @param id Task ID.
-     * @return TaskDTO of the retrieved task.
-     */
+    // Retrieve a task by its ID with validation
     public TaskDTO getTaskById(int id) {
         logger.info("[TaskService][GET TASK BY ID] Retrieving task with ID: {}", id);
+        validateTaskId(id); // Validate ID
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> {
                     logger.error("[TaskService][GET TASK BY ID] Task not found with ID: {}", id);
@@ -56,11 +48,7 @@ public class TaskService {
         return mapToDTO(task);
     }
 
-    /**
-     * Retrieve all tasks.
-     *
-     * @return List of TaskDTOs.
-     */
+    // Retrieve all tasks
     public List<TaskDTO> getAllTasks() {
         logger.info("[TaskService][GET ALL TASKS] Retrieving all tasks");
         List<TaskDTO> tasks = taskRepository.findAll().stream()
@@ -70,16 +58,12 @@ public class TaskService {
         return tasks;
     }
 
-    /**
-     * Update the status of a task.
-     *
-     * @param id     Task ID.
-     * @param status New status of the task.
-     * @return Updated TaskDTO.
-     */
+    // Update the status of a task with validation
     @Transactional
     public TaskDTO updateTaskStatus(int id, String status) {
         logger.info("[TaskService][UPDATE TASK STATUS] Updating status of task with ID: {} to {}", id, status);
+        validateTaskId(id); // Validate ID
+        validateTaskStatus(status); // Validate status
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> {
                     logger.error("[TaskService][UPDATE TASK STATUS] Task not found with ID: {}", id);
@@ -91,14 +75,11 @@ public class TaskService {
         return mapToDTO(updatedTask);
     }
 
-    /**
-     * Delete a task by its ID.
-     *
-     * @param id Task ID.
-     */
+    // Delete a task by its ID with validation
     @Transactional
     public void deleteTask(int id) {
         logger.info("[TaskService][DELETE TASK] Deleting task with ID: {}", id);
+        validateTaskId(id); // Validate ID
         if (!taskRepository.existsById(id)) {
             logger.error("[TaskService][DELETE TASK] Task not found with ID: {}", id);
             throw new TaskNotFoundException("Task not found with ID: " + id);
@@ -107,34 +88,47 @@ public class TaskService {
         logger.info("[TaskService][DELETE TASK] Task deleted successfully with ID: {}", id);
     }
 
-    /**
-     * Validate TaskDTO fields.
-     *
-     * @param taskDTO Task data transfer object.
-     */
+    // Validate TaskDTO fields
     private void validateTaskDTO(TaskDTO taskDTO) {
         logger.debug("[TaskService][VALIDATE TASK] Validating TaskDTO: {}", taskDTO);
         if (taskDTO.getTitle() == null || taskDTO.getTitle().isEmpty()) {
             logger.error("[TaskService][VALIDATE TASK] Validation failed: Task title cannot be empty");
-            throw new IllegalArgumentException("Task title cannot be empty");
+            throw new ValidationException("Task title cannot be empty");
         }
         if (taskDTO.getStatus() == null || taskDTO.getStatus().isEmpty()) {
             logger.error("[TaskService][VALIDATE TASK] Validation failed: Task status cannot be empty");
-            throw new IllegalArgumentException("Task status cannot be empty");
+            throw new ValidationException("Task status cannot be empty");
         }
         if (taskDTO.getDueDate() == null) {
             logger.error("[TaskService][VALIDATE TASK] Validation failed: Task due date cannot be null");
-            throw new IllegalArgumentException("Task due date cannot be null");
+            throw new ValidationException("Task due date cannot be null");
         }
         logger.debug("[TaskService][VALIDATE TASK] Validation passed for TaskDTO: {}", taskDTO);
     }
 
-    /**
-     * Map TaskDTO to Task entity.
-     *
-     * @param taskDTO Task data transfer object.
-     * @return Task entity.
-     */
+    // Validate task ID
+    private void validateTaskId(int id) {
+        if (id <= 0) {
+            logger.error("[TaskService][VALIDATE ID] Validation failed: Task ID must be greater than 0");
+            throw new ValidationException("Task ID must be greater than 0");
+        }
+    }
+
+    // Validate task status
+    private void validateTaskStatus(String status) {
+        logger.debug("[TaskService][VALIDATE STATUS] Validating task status: {}", status);
+        if (status == null || status.isEmpty()) {
+            logger.error("[TaskService][VALIDATE STATUS] Validation failed: Task status cannot be empty");
+            throw new ValidationException("Task status cannot be empty");
+        }
+        if (!List.of("PENDING", "IN_PROGRESS", "COMPLETED").contains(status)) {
+            logger.error("[TaskService][VALIDATE STATUS] Validation failed: Invalid task status: {}", status);
+            throw new ValidationException("Invalid task status: " + status);
+        }
+        logger.debug("[TaskService][VALIDATE STATUS] Validation passed for status: {}", status);
+    }
+
+    // Map TaskDTO to Task entity
     private Task mapToEntity(TaskDTO taskDTO) {
         logger.debug("[TaskService][MAP TO ENTITY] Mapping TaskDTO to Task entity: {}", taskDTO);
         Task task = new Task();
@@ -147,12 +141,7 @@ public class TaskService {
         return task;
     }
 
-    /**
-     * Map Task entity to TaskDTO.
-     *
-     * @param task Task entity.
-     * @return TaskDTO.
-     */
+    // Map Task entity to TaskDTO
     private TaskDTO mapToDTO(Task task) {
         logger.debug("[TaskService][MAP TO DTO] Mapping Task entity to TaskDTO: {}", task);
         TaskDTO taskDTO = new TaskDTO();
