@@ -11,6 +11,7 @@ import uk.gov.hmcts.reform.dev.exceptions.ValidationException;
 import uk.gov.hmcts.reform.dev.models.Task;
 import uk.gov.hmcts.reform.dev.repositories.TaskRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,8 +32,10 @@ public class TaskService {
         logger.info("[TaskService][CREATE TASK] Creating task with title: {}", taskDTO.getTitle());
         validateTaskDTO(taskDTO);
         Task task = mapToEntity(taskDTO);
+        task.setCreatedDate(LocalDateTime.now());
+
         try {
-            Task savedTask = taskRepository.save(task); // Wrap repository save method
+            Task savedTask = taskRepository.save(task); // Save the task
             logger.info("[TaskService][CREATE TASK] Task created successfully with ID: {}", savedTask.getId());
             return mapToDTO(savedTask);
         } catch (Exception ex) {
@@ -169,6 +172,7 @@ public class TaskService {
         taskDTO.setDescription(task.getDescription());
         taskDTO.setStatus(task.getStatus());
         taskDTO.setDueDate(task.getDueDate());
+        taskDTO.setCreatedDate(task.getCreatedDate());
         logger.debug("[TaskService][MAP TO DTO] Mapped TaskDTO: {}", taskDTO);
         return taskDTO;
     }

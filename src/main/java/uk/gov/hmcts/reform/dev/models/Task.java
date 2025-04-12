@@ -32,7 +32,6 @@ public class Task {
     @NotNull(message = "Status is mandatory")
     private String status;
 
-    @CreationTimestamp
     @NotNull(message = "Create date/time is mandatory")
     private LocalDateTime createdDate;
 
