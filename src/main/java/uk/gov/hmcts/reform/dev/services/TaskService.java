@@ -35,7 +35,7 @@ public class TaskService {
         task.setCreatedDate(LocalDateTime.now());
 
         try {
-            Task savedTask = taskRepository.save(task); // Save the task
+            Task savedTask = taskRepository.save(task);
             logger.info("[TaskService][CREATE TASK] Task created successfully with ID: {}", savedTask.getId());
             return mapToDTO(savedTask);
         } catch (Exception ex) {

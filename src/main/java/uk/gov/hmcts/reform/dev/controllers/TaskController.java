@@ -51,14 +51,14 @@ public class TaskController {
         @ApiResponse(responseCode = "400", description = "Invalid input provided")
     })
     @PostMapping(consumes = "application/json")
-public ResponseEntity<TaskDTO> createTask(
-    @Valid @RequestBody @Parameter(description = "Details of the task to be created") TaskDTO taskDTO
-) {
-    logger.info("[TaskController][CREATE TASK] Received request to create a new task");
-    TaskDTO createdTask = taskService.createTask(taskDTO);
-    logger.info("[TaskController][CREATE TASK] Task created successfully with ID: {}", createdTask.getId());
-    return ResponseEntity.ok(createdTask);
-}
+    public ResponseEntity<TaskDTO> createTask(
+        @Valid @RequestBody @Parameter(description = "Details of the task to be created") TaskDTO taskDTO
+    ) {
+        logger.info("[TaskController][CREATE TASK] Received request to create a new task");
+        TaskDTO createdTask = taskService.createTask(taskDTO);
+        logger.info("[TaskController][CREATE TASK] Task created successfully with ID: {}", createdTask.getId());
+        return ResponseEntity.ok(createdTask);
+    }
 
     @Operation(
         summary = "Retrieve a task by ID",
@@ -87,7 +87,7 @@ public ResponseEntity<TaskDTO> createTask(
     ) {
         logger.info("[TaskController][GET TASK BY ID] Received request to retrieve task with ID: {}", id);
         TaskDTO task = taskService.getTaskById(id);
-        logger.info("[TaskController][GET TASK BY ID] Task retrieved successfully: {}", task);
+        logger.info("[TaskController][GET TASK BY ID] Task retrieved successfully with ID: {}", id);
         return ResponseEntity.ok(task);
     }
 
@@ -124,9 +124,9 @@ public ResponseEntity<TaskDTO> createTask(
         @PathVariable @Parameter(description = "ID of the task to update") int id,
         @RequestParam @Parameter(description = "New status of the task") String status
     ) {
-        logger.info("[TaskController][UPDATE TASK STATUS] Received request to update status of task with ID: {} to {}", id, status);
+        logger.info("[TaskController][UPDATE TASK STATUS] Received request to update status of task with ID: {}", id);
         TaskDTO updatedTask = taskService.updateTaskStatus(id, status);
-        logger.info("[TaskController][UPDATE TASK STATUS] Task status updated successfully for ID: {}", id);
+        logger.info("[TaskController][UPDATE TASK STATUS] Task status updated successfully with ID: {}", id);
         return ResponseEntity.ok(updatedTask);
     }
 
