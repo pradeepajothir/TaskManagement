@@ -20,6 +20,21 @@ management:
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.dev.controllers
   writer-with-order-by-keys: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+  info:
+    title: Task Mangement API
+    description: API documentation for the taskmanagement-backend application
+    version: 1.0.0
+    contact:
+      name: Support Team
+      email: support@hmcts.gov.uk
+      url: hmcts.gov.uk
+    license:
+      name: Apache 2.0
+      url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 spring:
   config:
@@ -49,3 +64,4 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
