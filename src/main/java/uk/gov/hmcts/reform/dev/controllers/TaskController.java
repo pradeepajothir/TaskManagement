@@ -33,22 +33,19 @@ public class TaskController {
 
     @Operation(
         summary = "Create a new task",
-        description = "Create a new task with the provided details. The createdDate field is system-generated."
+        description = "Create a new task with the provided details. The `createdDate` field is system-generated and will not be included in the request body."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Task successfully created",
+        @ApiResponse(responseCode = "200", description = "Task successfully created"),
+        @ApiResponse(responseCode = "400", description = "Invalid input provided",
             content = @Content(mediaType = "application/json",
                 examples = @ExampleObject(value = """
                     {
-                        "title": "New Task",
-                        "description": "Details about the new task",
-                        "status": "PENDING",
-                        "dueDate": "2025-04-15T10:00:00"
+                        "message": "Validation failed",
                     }
                 """)
             )
-        ),
-        @ApiResponse(responseCode = "400", description = "Invalid input provided")
+        )
     })
     @PostMapping(consumes = "application/json")
     public ResponseEntity<TaskDTO> createTask(
@@ -65,21 +62,16 @@ public class TaskController {
         description = "Retrieve details of a specific task by its unique ID."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved the task",
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved the task"),
+        @ApiResponse(responseCode = "404", description = "Task not found",
             content = @Content(mediaType = "application/json",
                 examples = @ExampleObject(value = """
                     {
-                        "id": 1,
-                        "title": "Sample Task",
-                        "description": "This is a sample task",
-                        "status": "IN_PROGRESS",
-                        "dueDate": "2025-04-15T10:00:00",
-                        "createdDate": "2025-04-01T10:00:00"
+                        "message": "Task not found with the given ID"
                     }
                 """)
             )
-        ),
-        @ApiResponse(responseCode = "404", description = "Task not found")
+        )
     })
     @GetMapping(value = "/{id}")
     public ResponseEntity<TaskDTO> getTaskById(
@@ -96,8 +88,39 @@ public class TaskController {
         description = "Retrieve a list of all tasks available in the system."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of tasks"),
-        @ApiResponse(responseCode = "404", description = "No tasks found")
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of tasks",
+            content = @Content(mediaType = "application/json",
+                examples = @ExampleObject(value = """
+                    [
+                        {
+                            "id": 1,
+                            "title": "Sample Task",
+                            "description": "This is a sample task",
+                            "status": "IN_PROGRESS",
+                            "dueDate": "2025-04-15T10:00:00",
+                            "createdDate": "2025-04-01T10:00:00"
+                        },
+                        {
+                            "id": 2,
+                            "title": "Another Task",
+                            "description": "This is another sample task",
+                            "status": "PENDING",
+                            "dueDate": "2025-04-20T10:00:00",
+                            "createdDate": "2025-04-05T10:00:00"
+                        }
+                    ]
+                """)
+            )
+        ),
+        @ApiResponse(responseCode = "404", description = "No tasks found",
+            content = @Content(mediaType = "application/json",
+                examples = @ExampleObject(value = """
+                    {
+                        "message": "No tasks found"
+                    }
+                """)
+            )
+        )
     })
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getAllTasks() {
@@ -117,7 +140,15 @@ public class TaskController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Task status updated successfully"),
-        @ApiResponse(responseCode = "404", description = "Task not found")
+        @ApiResponse(responseCode = "404", description = "Task not found",
+            content = @Content(mediaType = "application/json",
+                examples = @ExampleObject(value = """
+                    {
+                        "message": "Task not found with the given ID"
+                    }
+                """)
+            )
+        )
     })
     @PatchMapping(value = "/{id}/status", consumes = "application/json")
     public ResponseEntity<TaskDTO> updateTaskStatus(

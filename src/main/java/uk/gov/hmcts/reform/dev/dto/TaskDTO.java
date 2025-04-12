@@ -36,6 +36,6 @@ public class TaskDTO {
     private LocalDateTime dueDate;
 
     @NotNull(message = "Created date is mandatory")
-    @Schema(description = "Date and time when the task was created", example = "2025-04-01T10:00:00")
+    @Schema(description = "Date and time when the task was created", example = "2025-04-01T10:00:00", readOnly = true)
     private LocalDateTime createdDate;
 }
