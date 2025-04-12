@@ -16,7 +16,6 @@ import uk.gov.hmcts.reform.dev.dto.TaskDTO;
 import uk.gov.hmcts.reform.dev.services.TaskService;
 
 import jakarta.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -52,15 +51,14 @@ public class TaskController {
         @ApiResponse(responseCode = "400", description = "Invalid input provided")
     })
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<TaskDTO> createTask(
-        @Valid @RequestBody @Parameter(description = "Details of the task to be created") TaskDTO taskDTO
-    ) {
-        logger.info("[TaskController][CREATE TASK] Received request to create task with title: {}", taskDTO.getTitle());
-        taskDTO.setCreatedDate(LocalDateTime.now()); // System-generated createdDate
-        TaskDTO createdTask = taskService.createTask(taskDTO);
-        logger.info("[TaskController][CREATE TASK] Task created successfully with ID: {}", createdTask.getId());
-        return ResponseEntity.ok(createdTask);
-    }
+public ResponseEntity<TaskDTO> createTask(
+    @Valid @RequestBody @Parameter(description = "Details of the task to be created") TaskDTO taskDTO
+) {
+    logger.info("[TaskController][CREATE TASK] Received request to create a new task");
+    TaskDTO createdTask = taskService.createTask(taskDTO);
+    logger.info("[TaskController][CREATE TASK] Task created successfully with ID: {}", createdTask.getId());
+    return ResponseEntity.ok(createdTask);
+}
 
     @Operation(
         summary = "Retrieve a task by ID",
