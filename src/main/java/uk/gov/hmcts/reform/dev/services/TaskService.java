@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.reform.dev.dto.TaskDTO;
+import uk.gov.hmcts.reform.dev.exceptions.DatabaseException;
 import uk.gov.hmcts.reform.dev.exceptions.TaskNotFoundException;
 import uk.gov.hmcts.reform.dev.exceptions.ValidationException;
 import uk.gov.hmcts.reform.dev.models.Task;
@@ -28,64 +29,82 @@ public class TaskService {
     @Transactional
     public TaskDTO createTask(TaskDTO taskDTO) {
         logger.info("[TaskService][CREATE TASK] Creating task with title: {}", taskDTO.getTitle());
-        validateTaskDTO(taskDTO); // Validate input
+        validateTaskDTO(taskDTO);
         Task task = mapToEntity(taskDTO);
-        Task savedTask = taskRepository.save(task);
-        logger.info("[TaskService][CREATE TASK] Task created successfully with ID: {}", savedTask.getId());
-        return mapToDTO(savedTask);
+        try {
+            Task savedTask = taskRepository.save(task); // Wrap repository save method
+            logger.info("[TaskService][CREATE TASK] Task created successfully with ID: {}", savedTask.getId());
+            return mapToDTO(savedTask);
+        } catch (Exception ex) {
+            logger.error("[TaskService][CREATE TASK] Failed to save task: {}", task, ex);
+            throw new DatabaseException("Failed to save task to the database", ex);
+        }
     }
 
     // Retrieve a task by its ID with validation
     public TaskDTO getTaskById(int id) {
         logger.info("[TaskService][GET TASK BY ID] Retrieving task with ID: {}", id);
-        validateTaskId(id); // Validate ID
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> {
-                    logger.error("[TaskService][GET TASK BY ID] Task not found with ID: {}", id);
-                    return new TaskNotFoundException("Task not found with ID: " + id);
-                });
-        logger.info("[TaskService][GET TASK BY ID] Task retrieved successfully with ID: {}", id);
-        return mapToDTO(task);
+        validateTaskId(id);
+        try {
+            Task task = taskRepository.findById(id)
+                    .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + id));
+            logger.info("[TaskService][GET TASK BY ID] Task retrieved successfully with ID: {}", id);
+            return mapToDTO(task);
+        } catch (Exception ex) {
+            logger.error("[TaskService][GET TASK BY ID] Failed to retrieve task with ID: {}", id, ex);
+            throw new DatabaseException("Failed to retrieve task from the database", ex);
+        }
     }
 
     // Retrieve all tasks
     public List<TaskDTO> getAllTasks() {
         logger.info("[TaskService][GET ALL TASKS] Retrieving all tasks");
-        List<TaskDTO> tasks = taskRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-        logger.info("[TaskService][GET ALL TASKS] Retrieved {} tasks successfully", tasks.size());
-        return tasks;
+        try {
+            List<TaskDTO> tasks = taskRepository.findAll().stream()
+                    .map(this::mapToDTO)
+                    .collect(Collectors.toList());
+            logger.info("[TaskService][GET ALL TASKS] Retrieved {} tasks successfully", tasks.size());
+            return tasks;
+        } catch (Exception ex) {
+            logger.error("[TaskService][GET ALL TASKS] Failed to retrieve tasks", ex);
+            throw new DatabaseException("Failed to retrieve tasks from the database", ex);
+        }
     }
 
     // Update the status of a task with validation
     @Transactional
     public TaskDTO updateTaskStatus(int id, String status) {
         logger.info("[TaskService][UPDATE TASK STATUS] Updating status of task with ID: {} to {}", id, status);
-        validateTaskId(id); // Validate ID
-        validateTaskStatus(status); // Validate status
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> {
-                    logger.error("[TaskService][UPDATE TASK STATUS] Task not found with ID: {}", id);
-                    return new TaskNotFoundException("Task not found with ID: " + id);
-                });
-        task.setStatus(status);
-        Task updatedTask = taskRepository.save(task);
-        logger.info("[TaskService][UPDATE TASK STATUS] Task status updated successfully for ID: {}", id);
-        return mapToDTO(updatedTask);
+        validateTaskId(id);
+        validateTaskStatus(status);
+        try {
+            Task task = taskRepository.findById(id)
+                    .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + id));
+            task.setStatus(status);
+            Task updatedTask = taskRepository.save(task);
+            logger.info("[TaskService][UPDATE TASK STATUS] Task status updated successfully for ID: {}", id);
+            return mapToDTO(updatedTask);
+        } catch (Exception ex) {
+            logger.error("[TaskService][UPDATE TASK STATUS] Failed to update task status for ID: {}", id, ex);
+            throw new DatabaseException("Failed to update task status in the database", ex);
+        }
     }
 
     // Delete a task by its ID with validation
     @Transactional
     public void deleteTask(int id) {
         logger.info("[TaskService][DELETE TASK] Deleting task with ID: {}", id);
-        validateTaskId(id); // Validate ID
-        if (!taskRepository.existsById(id)) {
-            logger.error("[TaskService][DELETE TASK] Task not found with ID: {}", id);
-            throw new TaskNotFoundException("Task not found with ID: " + id);
+        validateTaskId(id);
+        try {
+            if (!taskRepository.existsById(id)) {
+                throw new TaskNotFoundException("Task not found with ID: " + id);
+            }
+            taskRepository.deleteById(id);
+            logger.info("[TaskService][DELETE TASK] Task deleted successfully with ID: {}", id);
+        } catch (Exception ex) {
+            logger.error("[TaskService][DELETE TASK] Failed to delete task with ID: {}", id, ex);
+            throw new DatabaseException("Failed to delete task from the database", ex);
         }
-        taskRepository.deleteById(id);
-        logger.info("[TaskService][DELETE TASK] Task deleted successfully with ID: {}", id);
     }
 
     // Validate TaskDTO fields
