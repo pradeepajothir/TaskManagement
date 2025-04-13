@@ -17,6 +17,7 @@ import uk.gov.hmcts.reform.dev.services.TaskService;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/tasks", produces = "application/json")
@@ -153,9 +154,10 @@ public class TaskController {
     @PatchMapping(value = "/{id}/status", consumes = "application/json")
     public ResponseEntity<TaskDTO> updateTaskStatus(
         @PathVariable @Parameter(description = "ID of the task to update") int id,
-        @RequestParam @Parameter(description = "New status of the task") String status
+        @RequestBody @Parameter(description = "JSON body containing the new status of the task") Map<String, String> request
     ) {
         logger.info("[TaskController][UPDATE TASK STATUS] Received request to update status of task with ID: {}", id);
+        String status = request.get("status");
         TaskDTO updatedTask = taskService.updateTaskStatus(id, status);
         logger.info("[TaskController][UPDATE TASK STATUS] Task status updated successfully with ID: {}", id);
         return ResponseEntity.ok(updatedTask);
