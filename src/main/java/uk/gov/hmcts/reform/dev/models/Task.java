@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.dev.models;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
