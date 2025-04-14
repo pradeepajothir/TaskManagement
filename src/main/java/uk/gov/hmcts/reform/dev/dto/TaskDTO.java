@@ -35,7 +35,7 @@ public class TaskDTO {
     private String status;
 
     @NotNull(message = "Due date is mandatory")
-    @Schema(description = "Due date of the task", example = "2025-04-15T10:00:00")
+    @Schema(description = "Task Due date", example = "2025-04-01T10:00:00")
     private LocalDateTime dueDate;
 
     @NotNull(message = "Created date is mandatory")
