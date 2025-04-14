@@ -50,14 +50,21 @@ public class TaskService {
         validateTaskId(id);
         try {
             Task task = taskRepository.findById(id)
-                    .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + id));
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + id));
             logger.info("[TaskService][GET TASK BY ID] Task retrieved successfully with ID: {}", id);
             return mapToDTO(task);
+        } catch (TaskNotFoundException ex) {
+            // Task not found is a normal business case — just rethrow
+            logger.warn("[TaskService][GET TASK BY ID] Task not found with ID: {}", id);
+            throw ex;
+
         } catch (Exception ex) {
             logger.error("[TaskService][GET TASK BY ID] Failed to retrieve task with ID: {}", id, ex);
+            // TODO: Refine exception handling if needed in future (e.g., specific DB exceptions)
             throw new DatabaseException("Failed to retrieve task from the database", ex);
         }
     }
+
 
     // Retrieve all tasks
     public List<TaskDTO> getAllTasks() {
@@ -104,7 +111,12 @@ public class TaskService {
             }
             taskRepository.deleteById(id);
             logger.info("[TaskService][DELETE TASK] Task deleted successfully with ID: {}", id);
-        } catch (Exception ex) {
+
+        }catch (TaskNotFoundException ex) {
+            logger.warn("[TaskService][DELETE TASK] Task not found with ID: {}", id);
+            throw ex;
+
+        }  catch (Exception ex) {
             logger.error("[TaskService][DELETE TASK] Failed to delete task with ID: {}", id, ex);
             throw new DatabaseException("Failed to delete task from the database", ex);
         }
