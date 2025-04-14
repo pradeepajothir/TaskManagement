@@ -19,6 +19,16 @@ java {
 }
 
 sourceSets {
+
+  unitTest {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+            srcDir file('src/unitTest/java')
+        }
+        resources.srcDir file('src/unitTest/resources')
+  } 
+
   functionalTest {
     java {
       compileClasspath += main.output
@@ -56,6 +66,9 @@ configurations {
 
   smokeTestImplementation.extendsFrom testImplementation
   smokeTestRuntimeOnly.extendsFrom runtimeOnly
+
+  unitTestImplementation.extendsFrom testImplementation
+  unitTestRuntimeOnly.extendsFrom runtimeOnly
 }
 
 tasks.withType(JavaCompile) {
@@ -77,6 +90,13 @@ tasks.withType(Test) {
 
 test {
   failFast = true
+}
+
+task unitTest(type: Test) {
+    description = "Runs unit tests"
+    group = "Verification"
+    testClassesDirs = sourceSets.unitTest.output.classesDirs
+    classpath = sourceSets.unitTest.runtimeClasspath
 }
 
 task functional(type: Test) {
