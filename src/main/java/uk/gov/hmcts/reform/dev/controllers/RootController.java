@@ -25,4 +25,9 @@ public class RootController {
         logger.info("[RootController][WELCOME] Returning welcome message");
         return ok(message);
     }
+
+    @GetMapping("/**")
+    public ResponseEntity<String> handleInvalidEndpoint() {
+        return ResponseEntity.status(404).body("Endpoint not found");
+    }
 }
