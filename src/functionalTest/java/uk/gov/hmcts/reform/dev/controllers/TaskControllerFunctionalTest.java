@@ -2,9 +2,7 @@ package uk.gov.hmcts.reform.dev.functional;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -13,23 +11,22 @@ import static org.hamcrest.Matchers.notNullValue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class TaskControllerFunctionalTest {
 
-    @Value("${server.port:4000}")
-    private int port;
-
-    @BeforeEach
-    void setup() {
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = port;
-    }
-
     @Test
     void shouldCreateAndRetrieveTask() {
-        String taskJson = TaskJsonBuilder.buildValidTaskJson("Functional Test Task", "This is a functional test task", "PENDING");
+        // Create a new task
+        String taskJson = """
+            {
+                "title": "Functional Test Task",
+                "description": "This is a functional test task",
+                "status": "PENDING",
+                "dueDate": "2025-04-20T10:00:00"
+            }
+        """;
 
         Response createResponse = RestAssured.given()
             .contentType("application/json")
             .body(taskJson)
-            .post("/tasks");
+            .post("http://localhost:4000/tasks");
 
         createResponse.then()
             .statusCode(200)
@@ -37,10 +34,11 @@ class TaskControllerFunctionalTest {
             .body("title", equalTo("Functional Test Task"))
             .body("status", equalTo("PENDING"));
 
+        // Retrieve the created task
         int taskId = createResponse.jsonPath().getInt("id");
 
         RestAssured.given()
-            .get("/tasks/" + taskId)
+            .get("http://localhost:4000/tasks/" + taskId)
             .then()
             .statusCode(200)
             .body("id", equalTo(taskId))
@@ -50,7 +48,7 @@ class TaskControllerFunctionalTest {
     @Test
     void shouldRetrieveAllTasks() {
         RestAssured.given()
-            .get("/tasks")
+            .get("http://localhost:4000/tasks")
             .then()
             .statusCode(200)
             .body("size()", notNullValue());
@@ -58,15 +56,24 @@ class TaskControllerFunctionalTest {
 
     @Test
     void shouldUpdateTaskStatus() {
-        String taskJson = TaskJsonBuilder.buildValidTaskJson("Functional Test Task", "This is a functional test task", "PENDING");
+        // Create a new task
+        String taskJson = """
+            {
+                "title": "Functional Test Task",
+                "description": "This is a functional test task",
+                "status": "PENDING",
+                "dueDate": "2025-04-20T10:00:00"
+            }
+        """;
 
         Response createResponse = RestAssured.given()
             .contentType("application/json")
             .body(taskJson)
-            .post("/tasks");
+            .post("http://localhost:4000/tasks");
 
         int taskId = createResponse.jsonPath().getInt("id");
 
+        // Update the task status
         String statusUpdateJson = """
             {
                 "status": "COMPLETED"
@@ -76,7 +83,7 @@ class TaskControllerFunctionalTest {
         RestAssured.given()
             .contentType("application/json")
             .body(statusUpdateJson)
-            .patch("/tasks/" + taskId + "/status")
+            .patch("http://localhost:4000/tasks/" + taskId + "/status")
             .then()
             .statusCode(200)
             .body("status", equalTo("COMPLETED"));
@@ -84,60 +91,53 @@ class TaskControllerFunctionalTest {
 
     @Test
     void shouldDeleteTask() {
-        String taskJson = TaskJsonBuilder.buildValidTaskJson("Functional Test Task", "This is a functional test task", "PENDING");
+        // Create a new task
+        String taskJson = """
+            {
+                "title": "Functional Test Task",
+                "description": "This is a functional test task",
+                "status": "PENDING",
+                "dueDate": "2025-04-20T10:00:00"
+            }
+        """;
 
         Response createResponse = RestAssured.given()
             .contentType("application/json")
             .body(taskJson)
-            .post("/tasks");
+            .post("http://localhost:4000/tasks");
 
         int taskId = createResponse.jsonPath().getInt("id");
 
+        // Delete the task
         RestAssured.given()
-            .delete("/tasks/" + taskId)
+            .delete("http://localhost:4000/tasks/" + taskId)
             .then()
             .statusCode(204);
 
+        // Verify the task is deleted
         RestAssured.given()
-            .get("/tasks/" + taskId)
+            .get("http://localhost:4000/tasks/" + taskId)
             .then()
             .statusCode(404);
     }
 
     @Test
     void shouldReturnBadRequestForInvalidTask() {
-        String invalidTaskJson = TaskJsonBuilder.buildInvalidTaskJson();
+        // Create an invalid task
+        String invalidTaskJson = """
+            {
+                "title": "",
+                "description": "",
+                "status": "",
+                "dueDate": null
+            }
+        """;
 
         RestAssured.given()
             .contentType("application/json")
             .body(invalidTaskJson)
-            .post("/tasks")
+            .post("http://localhost:4000/tasks")
             .then()
             .statusCode(400);
-    }
-
-    static class TaskJsonBuilder {
-
-        static String buildValidTaskJson(String title, String description, String status) {
-            return """
-                {
-                    "title": "%s",
-                    "description": "%s",
-                    "status": "%s",
-                    "dueDate": "2025-04-20T10:00:00"
-                }
-            """.formatted(title, description, status);
-        }
-
-        static String buildInvalidTaskJson() {
-            return """
-                {
-                    "title": "",
-                    "description": "",
-                    "status": "",
-                    "dueDate": null
-                }
-            """;
-        }
     }
 }
