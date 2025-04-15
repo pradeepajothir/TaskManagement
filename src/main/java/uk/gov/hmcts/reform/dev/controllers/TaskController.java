@@ -127,12 +127,8 @@ public class TaskController {
     public ResponseEntity<List<TaskDTO>> getAllTasks() {
         logger.info("[TaskController][GET ALL TASKS] Received request to retrieve all tasks");
         List<TaskDTO> tasks = taskService.getAllTasks();
-        if (tasks.isEmpty()) {
-            logger.warn("[TaskController][GET ALL TASKS] No tasks found");
-            return ResponseEntity.notFound().build();
-        }
         logger.info("[TaskController][GET ALL TASKS] Retrieved {} tasks successfully", tasks.size());
-        return ResponseEntity.ok(tasks);
+        return ResponseEntity.ok(tasks); // Always return 200 OK
     }
 
     @Operation(
