@@ -25,3 +25,5 @@ applicationinsights-agent-*.jar
 *.log
 .vscode/launch.json
 .vscode/settings.json
+data/taskdb.mv.db
+data/taskdb.trace.db

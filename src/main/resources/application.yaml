@@ -2,8 +2,6 @@ server:
   port: 4000
   shutdown: "graceful"
 
-# If you want to use a database then uncomment the `group:, readiness: and include: "db"`
-# lines in the health probes and uncomment the datasource section
 management:
   endpoint:
     health:
@@ -47,16 +45,15 @@ spring:
       uk.gov.hmcts.reform.dev.services: DEBUG
     pattern:
       console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-  
+
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
-    username: admin
-    password: taskmaster
+    username: sa
+    password: password
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
   h2:
     console:
       enabled: true

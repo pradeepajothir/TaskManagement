@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -26,8 +27,4 @@ public class RootController {
         return ok(message);
     }
 
-    @GetMapping("/**")
-    public ResponseEntity<String> handleInvalidEndpoint() {
-        return ResponseEntity.status(404).body("Endpoint not found");
-    }
 }

@@ -28,9 +28,5 @@ class RootControllerTest {
                .andExpect(content().string(expectedMessage));
     }
 
-    @Test
-    void shouldReturnNotFoundForInvalidEndpoint() throws Exception {
-        mockMvc.perform(get("/invalid-endpoint"))
-               .andExpect(status().isNotFound());
-    }
+
 }
