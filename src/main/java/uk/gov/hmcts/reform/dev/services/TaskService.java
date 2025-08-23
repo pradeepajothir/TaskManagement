@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.dev.services;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.dev.enities.Task;
@@ -54,6 +53,14 @@ public class TaskService {
         taskToUpdate.setUpdatedAt(LocalDateTime.now());
 
         taskRepository.save(taskToUpdate);
+    }
+
+    @Transactional
+    public void deleteTask(Long id) {
+        Task taskToUpdate = taskRepository.findById(id)
+            .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
+
+        taskRepository.delete(taskToUpdate);
     }
 }
 

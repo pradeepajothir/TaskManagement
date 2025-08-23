@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.dev.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,6 +60,12 @@ public class TaskController {
         );
 
         return ResponseEntity.ok("Task updated successfully");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return ResponseEntity.ok("Task deleted successfully");
     }
 
 }
