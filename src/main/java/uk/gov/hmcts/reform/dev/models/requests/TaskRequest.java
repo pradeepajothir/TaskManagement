@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 // - Decouples the API layer from the persistence layer.
 // - Ensures only necessary fields are exposed for task creation.
 // - Immutable and concise representation of the request data.
-public record CreateTaskRequest(
+public record TaskRequest(
     @NotBlank(message = "Title is required")
     @Size(max = 200, message = "Title must be at most 200 characters")
     String title,

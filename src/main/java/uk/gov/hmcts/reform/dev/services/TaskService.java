@@ -1,9 +1,11 @@
 package uk.gov.hmcts.reform.dev.services;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.dev.enities.Task;
+import uk.gov.hmcts.reform.dev.exceptions.TaskNotFoundException;
 import uk.gov.hmcts.reform.dev.models.projections.TaskInfo;
 import uk.gov.hmcts.reform.dev.repositories.TaskRepository;
 
@@ -39,6 +41,19 @@ public class TaskService {
        Task savedTask = taskRepository.save(taskToAdd);
 
         return savedTask.getId();
+    }
+
+    @Transactional
+    public void updateTask(Long id, String title, String description, LocalDateTime dueDate) {
+        Task taskToUpdate = taskRepository.findById(id)
+            .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
+
+        taskToUpdate.setTitle(title);
+        taskToUpdate.setDescription(description);
+        taskToUpdate.setDueDate(dueDate);
+        taskToUpdate.setUpdatedAt(LocalDateTime.now());
+
+        taskRepository.save(taskToUpdate);
     }
 }
 
