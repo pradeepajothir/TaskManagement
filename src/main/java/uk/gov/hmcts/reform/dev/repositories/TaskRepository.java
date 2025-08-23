@@ -7,6 +7,7 @@ import uk.gov.hmcts.reform.dev.models.projections.TaskInfo;
 import java.util.List;
 import java.util.Optional;
 
+//JPA Repository safeguards SQL Injection by default
 public interface TaskRepository extends JpaRepository<Task, Long> {
     List<TaskInfo> findAllByOrderByCreatedAtDesc();
     Optional<TaskInfo> findTaskById(Long id);

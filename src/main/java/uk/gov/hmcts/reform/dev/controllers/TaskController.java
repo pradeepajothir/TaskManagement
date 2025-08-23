@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.dev.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,8 @@ import uk.gov.hmcts.reform.dev.models.projections.TaskInfo;
 import uk.gov.hmcts.reform.dev.services.TaskService;
 
 import java.util.List;
+
+import static uk.gov.hmcts.reform.dev.utlis.Sanitizer.sanitize;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -35,10 +38,10 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createTask(@RequestBody CreateTaskRequest taskRequest) {
+    public ResponseEntity<Long> createTask(@Valid @RequestBody CreateTaskRequest taskRequest) {
         Long newTaskId = taskService.createTask(
-            taskRequest.title(),
-            taskRequest.description(),
+            sanitize(taskRequest.title()),
+            sanitize(taskRequest.description()),
             taskRequest.dueDate()
         );
 
