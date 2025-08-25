@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.dev.enities.Task;
 import uk.gov.hmcts.reform.dev.exceptions.TaskNotFoundException;
+import uk.gov.hmcts.reform.dev.models.Status;
 import uk.gov.hmcts.reform.dev.models.projections.TaskInfo;
 import uk.gov.hmcts.reform.dev.repositories.TaskRepository;
 
@@ -26,13 +27,14 @@ public class TaskService {
     }
 
     @Transactional // To rollback DB query if failed execution
-    public Long createTask(String title, String description, LocalDateTime dueDate) {
+    public Long createTask(String title, String description, Status status, LocalDateTime dueDate) {
 
         var taskToAdd = Task
             .builder()
             .title(title)
             .description(description)
             .dueDate(dueDate)
+            .status(status)
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
             .build();

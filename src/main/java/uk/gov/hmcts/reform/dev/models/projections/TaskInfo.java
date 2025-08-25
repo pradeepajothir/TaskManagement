@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.dev.models.projections;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.hmcts.reform.dev.models.Status;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ public interface TaskInfo {
     Long getId();
     String getTitle();
     String getDescription();
+    Status getStatus();
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty("due_date")
     LocalDateTime getDueDate();

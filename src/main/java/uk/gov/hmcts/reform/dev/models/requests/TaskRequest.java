@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import uk.gov.hmcts.reform.dev.models.Status;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +18,7 @@ public record TaskRequest(
     String title,
     @Size(max = 500, message = "Description must be at most 500 characters")
     String description,
+    String status,
     @NotNull(message = "Due date is required")
     @JsonProperty("due_date")
     LocalDateTime dueDate

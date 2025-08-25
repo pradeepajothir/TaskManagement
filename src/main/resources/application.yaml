@@ -43,9 +43,10 @@ spring:
       maxLifetime: 7200000
       connectionTimeout: 30000
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         jdbc:
           lob:
-            # silence the 'wall-of-text' - unnecessary exception throw about blob types
             non_contextual_creation: true

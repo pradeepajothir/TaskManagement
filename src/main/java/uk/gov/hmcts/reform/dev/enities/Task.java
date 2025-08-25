@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.hmcts.reform.dev.models.Status;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +24,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Task {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "table_id_seq")
     @SequenceGenerator(name = "table_id_seq", sequenceName = "table_id_seq", allocationSize = 1)
@@ -37,6 +37,9 @@ public class Task {
 
     @Column(name = "due_date")
     private LocalDateTime dueDate;
+
+    @Column(nullable = false)
+    private Status status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

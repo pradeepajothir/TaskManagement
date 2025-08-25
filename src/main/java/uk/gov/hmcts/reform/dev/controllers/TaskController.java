@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.dev.exceptions.TaskNotFoundException;
+import uk.gov.hmcts.reform.dev.models.Status;
 import uk.gov.hmcts.reform.dev.models.requests.TaskRequest;
 import uk.gov.hmcts.reform.dev.models.projections.TaskInfo;
 import uk.gov.hmcts.reform.dev.services.TaskService;
@@ -44,6 +45,7 @@ public class TaskController {
         Long newTaskId = taskService.createTask(
             sanitize(taskRequest.title()),
             sanitize(taskRequest.description()),
+            Status.getStatus(taskRequest.status()),
             taskRequest.dueDate()
         );
 
