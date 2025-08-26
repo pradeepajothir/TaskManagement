@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.dev.enities.Task;
 import uk.gov.hmcts.reform.dev.exceptions.TaskNotFoundException;
 import uk.gov.hmcts.reform.dev.models.Status;
-import uk.gov.hmcts.reform.dev.models.projections.TaskInfo;
+import uk.gov.hmcts.reform.dev.models.dtos.TaskInfo;
 import uk.gov.hmcts.reform.dev.repositories.TaskRepository;
 
 import java.time.LocalDateTime;
@@ -18,12 +18,16 @@ import java.util.Optional;
 public class TaskService {
     private final TaskRepository taskRepository;
 
-    public Optional<TaskInfo> getTaskById(Long id) {
-        return taskRepository.findTaskById(id);
+    public List<TaskInfo> getAllTasks() {
+        return taskRepository.findAllByOrderByCreatedAtDesc()
+            .stream()
+            .map(TaskInfo::new)
+            .toList();
     }
 
-    public List<TaskInfo> getAllTasks() {
-        return taskRepository.findAllByOrderByCreatedAtDesc();
+    public Optional<TaskInfo> getTaskById(Long id) {
+        return taskRepository.findById(id)
+            .map(TaskInfo::new);
     }
 
     @Transactional // To rollback DB query if failed execution
@@ -45,12 +49,13 @@ public class TaskService {
     }
 
     @Transactional
-    public void updateTask(Long id, String title, String description, LocalDateTime dueDate) {
+    public void updateTask(Long id, String title, String description, Status status, LocalDateTime dueDate) {
         Task taskToUpdate = taskRepository.findById(id)
             .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
 
         taskToUpdate.setTitle(title);
         taskToUpdate.setDescription(description);
+        taskToUpdate.setStatus(status);
         taskToUpdate.setDueDate(dueDate);
         taskToUpdate.setUpdatedAt(LocalDateTime.now());
 
