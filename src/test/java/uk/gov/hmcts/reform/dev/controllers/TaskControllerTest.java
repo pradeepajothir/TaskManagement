@@ -59,11 +59,14 @@ class TaskControllerTest {
     }
 
     @Test
-    void getTaskById_throwsIfNotFound() {
-        when(taskService.getTaskById(99L)).thenReturn(Optional.empty());
+    void getTaskById_returnsNotFound() {
+        when(taskService.getTaskById(2L)).thenThrow(TaskNotFoundException.class);
 
-        assertThrows(TaskNotFoundException.class, () -> taskController.getTaskById(99L));
-        verify(taskService).getTaskById(99L);
+        ResponseEntity<TaskInfo> response = taskController.getTaskById(2L);
+
+        verify(taskService).getTaskById(2L);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
     }
 
     @Test
@@ -87,6 +90,20 @@ class TaskControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Task updated successfully", response.getBody());
         verify(taskService).updateTask(anyLong(), anyString(), anyString(), any(Status.class), any(LocalDateTime.class));
+    }
+
+    @Test
+    void updateTask_returnsNotFound() {
+
+        var dueDate = LocalDateTime.now();
+        TaskRequest req = new TaskRequest("Title", "Desc", "completed", dueDate);
+
+        doThrow(TaskNotFoundException.class).when(taskService).updateTask(5L, "Title", "Desc", Status.COMPLETED, dueDate);
+        ResponseEntity<String> response = taskController.updateTask(5L, req);
+
+        verify(taskService).updateTask(5L, "Title", "Desc", Status.COMPLETED, dueDate);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
     }
 
     @Test

@@ -35,9 +35,13 @@ public class TaskController {
 
     @GetMapping("/{id}")
     ResponseEntity<TaskInfo> getTaskById(@PathVariable Long id) {
-        var taskInfo = taskService.getTaskById(id)
-            .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
-        return ResponseEntity.ok(taskInfo);
+        try{
+            var taskInfo = taskService.getTaskById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
+            return ResponseEntity.ok(taskInfo);
+        } catch (TaskNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
@@ -54,15 +58,18 @@ public class TaskController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateTask(@PathVariable Long id , @Valid @RequestBody TaskRequest taskRequest) {
-        taskService.updateTask(
-            id,
-            sanitize(taskRequest.title()),
-            sanitize(taskRequest.description()),
-            Status.getStatus(taskRequest.status()),
-            taskRequest.dueDate()
-        );
-
-        return ResponseEntity.ok("Task updated successfully");
+        try {
+            taskService.updateTask(
+                id,
+                sanitize(taskRequest.title()),
+                sanitize(taskRequest.description()),
+                Status.getStatus(taskRequest.status()),
+                taskRequest.dueDate()
+            );
+            return ResponseEntity.ok("Task updated successfully");
+        } catch (TaskNotFoundException e) {
+            return  ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
