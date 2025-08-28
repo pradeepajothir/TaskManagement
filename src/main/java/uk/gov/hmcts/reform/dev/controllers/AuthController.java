@@ -37,6 +37,4 @@ public class AuthController {
         if (token != null) sessions.revoke(token);
         return ResponseEntity.noContent().build();
     }
-
-
 }
