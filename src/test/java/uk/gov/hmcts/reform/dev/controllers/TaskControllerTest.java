@@ -1,4 +1,3 @@
-// src/test/java/uk/gov/hmcts/reform/dev/controllers/TaskControllerTest.java
 package uk.gov.hmcts.reform.dev.controllers;
 
 import org.junit.jupiter.api.Test;
