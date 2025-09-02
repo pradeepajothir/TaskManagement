@@ -1,4 +1,4 @@
-# HMCTS Dev Test Backend
+# HMCTS Task Management Backend
 
 This repository contains the backend for the HMCTS case management system. It is built with Java and Gradle, following a clean architecture with the Repository pattern for data access, robust entity management, and comprehensive unit testing.
 
@@ -60,6 +60,13 @@ hmcts-dev-test-backend/
 │   │                       ├── repository/     # Repository unit tests
 │   │                       ├── service/        # Service layer unit tests
 │   │                       └── controller/     # Controller (API) unit tests
+│   ├── integration/
+│   │   └── java/
+│   │       └── uk/
+│   │           └── gov/
+│   │               └── hmcts/
+│   │                   └── devtest/
+│   │                       └── integration/    # Integration tests
 ├── build.gradle
 └── README.md
 ```
@@ -97,6 +104,15 @@ The repository includes unit tests for entities, repositories, services, and con
   ```bash
   ./gradlew test
   ```
+
+**Integration/Functional Tests**
+- Location: src/integration/java/uk/gov/hmcts/devtest/integration/
+- Purpose: Test the full stack (controller, service, repository, entity) including database interactions.
+- Database: H2 in-memory database for isolated test runs.
+- Framework: JUnit 5, Spring Boot Test
+- Run Command:
+  ```bash
+  ./gradlew integrationTest
 
 **Code Quality**
 Static Analysis:
