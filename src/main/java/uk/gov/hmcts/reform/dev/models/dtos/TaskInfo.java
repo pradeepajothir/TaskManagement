@@ -9,7 +9,7 @@ import uk.gov.hmcts.reform.dev.enities.Task;
 import java.time.LocalDateTime;
 
 /**
- * Projection for {@link uk.gov.hmcts.reform.dev.enities.Task}
+ * DTO for {@link uk.gov.hmcts.reform.dev.enities.Task}
  *
  * To hide unnecessary info from repository response.
  */

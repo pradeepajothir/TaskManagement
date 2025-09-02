@@ -21,6 +21,15 @@ public class AuthController {
         this.sessions = sessions;
     }
 
+    /**
+     * Handles mock user login requests.
+     * Accepts a {@link LoginRequest} containing username and password.
+     * Returns a {@link LoginResponse} with a token if credentials are non-empty,
+     * otherwise responds with HTTP 400 Bad Request.
+     *
+     * @param req the login request containing username and password
+     * @return ResponseEntity with LoginResponse if successful, or Bad Request if credentials are invalid
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
         // MOCK: accept any non-empty credentials
@@ -31,6 +40,15 @@ public class AuthController {
         return ResponseEntity.ok(sessions.issueToken(req.username()));
     }
 
+    /**
+     * Handles user logout requests.
+     * Expects an optional `Authorization` header containing a bearer token.
+     * If a valid token is provided, it will be revoked.
+     * Always responds with HTTP 204 No Content.
+     *
+     * @param auth the `Authorization` header value, may be null
+     * @return ResponseEntity with no content
+     */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader(name="Authorization", required=false) String auth) {
         String token = extractBearer(auth);

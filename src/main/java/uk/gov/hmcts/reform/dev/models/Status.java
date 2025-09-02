@@ -2,6 +2,9 @@ package uk.gov.hmcts.reform.dev.models;
 
 import java.util.Arrays;
 
+/**
+ * Enum representing the status of a task.
+ */
 public enum Status {
     PENDING("pending"),
     IN_PROGRESS("in progress"),

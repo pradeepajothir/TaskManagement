@@ -12,7 +12,7 @@ public class CorsConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration c = new CorsConfiguration();
-        c.addAllowedOriginPattern("*"); // tighten for interview if you know the exact origin
+        c.addAllowedOriginPattern("*"); // Loosly set for development purposes
         c.addAllowedHeader("*");
         c.addAllowedMethod("*");
         c.setAllowCredentials(false);

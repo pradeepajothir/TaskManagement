@@ -18,6 +18,11 @@ import java.util.Optional;
 public class TaskService {
     private final TaskRepository taskRepository;
 
+    /**
+     * Retrieves all tasks from the repository, ordered by creation date descending.
+     *
+     * @return a list of TaskInfo objects representing all tasks
+     */
     public List<TaskInfo> getAllTasks() {
         return taskRepository.findAllByOrderByCreatedAtDesc()
             .stream()
@@ -25,11 +30,26 @@ public class TaskService {
             .toList();
     }
 
+    /**
+     * Retrieves a task by its ID.
+     *
+     * @param id the ID of the task to retrieve
+     * @return an Optional containing TaskInfo if found, or empty if not found
+     */
     public Optional<TaskInfo> getTaskById(Long id) {
         return taskRepository.findById(id)
             .map(TaskInfo::new);
     }
 
+    /**
+     * Creates a new task with the provided details.
+     *
+     * @param title       the title of the task
+     * @param description the description of the task
+     * @param status      the status of the task
+     * @param dueDate     the due date of the task
+     * @return the ID of the newly created task
+     */
     @Transactional // To rollback DB query if failed execution
     public Long createTask(String title, String description, Status status, LocalDateTime dueDate) {
 
@@ -48,6 +68,16 @@ public class TaskService {
         return savedTask.getId();
     }
 
+    /**
+     * Updates an existing task with the provided details.
+     *
+     * @param id          the ID of the task to update
+     * @param title       the new title of the task
+     * @param description the new description of the task
+     * @param status      the new status of the task
+     * @param dueDate     the new due date of the task
+     * @throws TaskNotFoundException if no task with the given ID is found
+     */
     @Transactional
     public void updateTask(Long id, String title, String description, Status status, LocalDateTime dueDate) {
         Task taskToUpdate = taskRepository.findById(id)
@@ -62,6 +92,12 @@ public class TaskService {
         taskRepository.save(taskToUpdate);
     }
 
+    /**
+     * Deletes a task by its ID.
+     *
+     * @param id the ID of the task to delete
+     * @throws TaskNotFoundException if no task with the given ID is found
+     */
     @Transactional
     public void deleteTask(Long id) {
         Task taskToUpdate = taskRepository.findById(id)

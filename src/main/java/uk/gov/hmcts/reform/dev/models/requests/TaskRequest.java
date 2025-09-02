@@ -7,10 +7,14 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
-// Record to encapsulate the data needed to create a new task.
-// - Decouples the API layer from the persistence layer.
-// - Ensures only necessary fields are exposed for task creation.
-// - Immutable and concise representation of the request data.
+/**
+ * Record to encapsulate the data needed to create a new task.
+ * <ul>
+ *   <li>Decouples the API layer from the persistence layer.</li>
+ *   <li>Ensures only necessary fields are exposed for task creation.</li>
+ *   <li>Immutable and concise representation of the request data.</li>
+ * </ul>
+ */
 public record TaskRequest(
     @NotBlank(message = "Title is required")
     @Size(max = 200, message = "Title must be at most 200 characters")

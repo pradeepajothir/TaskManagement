@@ -28,11 +28,22 @@ public class TaskController {
 
     private final TaskService taskService;
 
+    /**
+     * Retrieves a list of all tasks.
+     *
+     * @return a list of {@link TaskInfo} representing all tasks
+     */
     @GetMapping
     public List<TaskInfo> getAllTasks() {
         return taskService.getAllTasks();
     }
 
+    /**
+     * Retrieves a task by its unique identifier.
+     *
+     * @param id the unique identifier of the task
+     * @return a {@link ResponseEntity} containing the {@link TaskInfo} if found, or a 404 Not Found response if not
+     */
     @GetMapping("/{id}")
     ResponseEntity<TaskInfo> getTaskById(@PathVariable Long id) {
         try{
@@ -44,6 +55,12 @@ public class TaskController {
         }
     }
 
+    /**
+     * Creates a new task.
+     *
+     * @param taskRequest the request body containing task details
+     * @return a {@link ResponseEntity} containing the ID of the newly created task
+     */
     @PostMapping
     public ResponseEntity<Long> createTask(@Valid @RequestBody TaskRequest taskRequest) {
         Long newTaskId = taskService.createTask(
@@ -56,6 +73,13 @@ public class TaskController {
         return ResponseEntity.ok(newTaskId);
     }
 
+    /**
+     * Updates an existing task.
+     *
+     * @param id          the unique identifier of the task to update
+     * @param taskRequest the request body containing updated task details
+     * @return a {@link ResponseEntity} containing ID of updated task if found, or 404 in not.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<String> updateTask(@PathVariable Long id , @Valid @RequestBody TaskRequest taskRequest) {
         try {
@@ -72,10 +96,20 @@ public class TaskController {
         }
     }
 
+    /**
+     * Deletes a task by its unique identifier.
+     *
+     * @param id the unique identifier of the task to delete
+     * @return a {@link ResponseEntity} indicating success or failure of the deletion if task found, else 404.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
-        return ResponseEntity.ok("Task deleted successfully");
+        try {
+            taskService.deleteTask(id);
+            return ResponseEntity.ok("Task deleted successfully");
+        } catch (TaskNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
