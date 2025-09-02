@@ -47,6 +47,11 @@ sourceSets {
   }
 }
 
+processIntegrationTestResources {
+  duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+
 configurations {
   functionalTestImplementation.extendsFrom testImplementation
   functionalTestRuntimeOnly.extendsFrom runtimeOnly
@@ -179,6 +184,8 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+
+  testImplementation "com.h2database:h2"
 }
 
 mainClassName = 'uk.gov.hmcts.reform.dev.Application'
