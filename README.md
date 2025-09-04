@@ -76,7 +76,8 @@ hmcts-dev-test-backend/
 Data access is abstracted using the Repository pattern. Interfaces in repository/ define CRUD operations, typically extending Spring Data JPA repositories. Custom queries and logic are implemented in repository classes.
 
 - Entity Management:
-Domain entities are defined in entity/ using JPA annotations. Relationships (e.g., @OneToMany, @ManyToOne) are used to model associations. Entities are managed by the persistence context, ensuring consistency and transactional integrity.
+Domain entities are defined in `entity/` using JPA annotations. Entities managed by the persistence context, ensuring consistency and transactional integrity.
+While DTOs are leveraged to limit the data surface area, entities are not directly exposed in API responses.
 
 ### Security
 
