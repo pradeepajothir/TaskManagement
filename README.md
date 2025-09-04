@@ -115,6 +115,6 @@ The repository includes unit tests for entities, repositories, services, and con
   ./gradlew integrationTest
 
 **Code Quality**
-Static Analysis:
+
 Tools like Checkstyle and Sonarqube are integrated for code quality checks.
 
