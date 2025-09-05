@@ -10,7 +10,8 @@ import uk.gov.hmcts.reform.dev.models.requests.LoginRequest;
 import uk.gov.hmcts.reform.dev.models.responses.LoginResponse;
 import uk.gov.hmcts.reform.dev.services.SessionService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

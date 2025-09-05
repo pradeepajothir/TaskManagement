@@ -13,9 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SessionService {
     private static final long TTL_SECONDS = 60 * 60; // 1 hour
-    /** List of session tokens with their expiration times in thread-safe map
-    * within thread-shared singleton service.
-    * (In production, consider using a distributed cache like Redis).
+    /**
+     * List of session tokens with their expiration times in thread-safe map
+     * within thread-shared singleton service.
+     * (In production, consider using a distributed cache like Redis).
      */
     private final Map<String, Long> sessions = new ConcurrentHashMap<>();
 
@@ -44,11 +45,18 @@ public class SessionService {
      * @return true if the token is valid and not expired, false otherwise
      */
     public boolean isValid(String token) {
-        if (token == null) return false;
+        if (token == null) {
+            return false;
+        }
         Long exp = sessions.get(token);
-        if (exp == null) return false;
+
+        if (exp == null) {
+            return false;
+        }
         boolean valid = exp > Instant.now().getEpochSecond();
-        if (!valid) sessions.remove(token);
+        if (!valid) {
+            sessions.remove(token);
+        }
         return valid;
     }
 

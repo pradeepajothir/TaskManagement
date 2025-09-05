@@ -50,9 +50,11 @@ public class AuthController {
      * @return ResponseEntity with no content
      */
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader(name="Authorization", required=false) String auth) {
+    public ResponseEntity<Void> logout(@RequestHeader(name = "Authorization", required = false) String auth) {
         String token = extractBearer(auth);
-        if (token != null) sessions.revoke(token);
+        if (token != null) {
+            sessions.revoke(token);
+        }
         return ResponseEntity.noContent().build();
     }
 }

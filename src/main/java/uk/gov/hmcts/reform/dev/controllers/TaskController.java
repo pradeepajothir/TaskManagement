@@ -46,7 +46,7 @@ public class TaskController {
      */
     @GetMapping("/{id}")
     ResponseEntity<TaskInfo> getTaskById(@PathVariable Long id) {
-        try{
+        try {
             var taskInfo = taskService.getTaskById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
             return ResponseEntity.ok(taskInfo);
@@ -81,7 +81,7 @@ public class TaskController {
      * @return a {@link ResponseEntity} containing ID of updated task if found, or 404 in not.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateTask(@PathVariable Long id , @Valid @RequestBody TaskRequest taskRequest) {
+    public ResponseEntity<String> updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequest taskRequest) {
         try {
             taskService.updateTask(
                 id,
@@ -92,7 +92,7 @@ public class TaskController {
             );
             return ResponseEntity.ok("Task updated successfully");
         } catch (TaskNotFoundException e) {
-            return  ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build();
         }
     }
 

@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 /**
  * DTO for {@link uk.gov.hmcts.reform.dev.enities.Task}
- *
  * To hide unnecessary info from repository response.
  */
 @Getter

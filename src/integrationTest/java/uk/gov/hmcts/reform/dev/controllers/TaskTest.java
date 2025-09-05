@@ -55,8 +55,13 @@ class TaskTest {
                     .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                     .accept(org.springframework.http.MediaType.APPLICATION_JSON)
                     .content("""
-                  {"title":"New task","description":"With in memory DB","status":"in progress", "due_date": "2025-08-27T00:00:00"}
-                """)
+                                   {
+                                       "title":"New task",
+                                       "description":"With in memory DB",
+                                       "status":"in progress",
+                                       "due_date": "2025-08-27T00:00:00"
+                                   }
+                                 """)
             )
             .andExpect(status().isOk());
     }

@@ -9,5 +9,6 @@ import java.util.Optional;
 //JPA Repository safeguards SQL Injection by default
 public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findAllByOrderByCreatedAtDesc();
+
     Optional<Task> findTaskById(Long id);
 }

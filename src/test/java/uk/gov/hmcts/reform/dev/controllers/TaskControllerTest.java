@@ -17,8 +17,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 class TaskControllerTest {
@@ -31,7 +39,8 @@ class TaskControllerTest {
     @Test
     void getAllTasks_returnsList() {
         TaskInfo info = new TaskInfo(
-            createTask(1L, "Title", "Desc", Status.PENDING, LocalDateTime.now(), LocalDateTime.now())
+            createTask(
+                1L, "Title", "Desc", Status.PENDING, LocalDateTime.now(), LocalDateTime.now())
         );
         when(taskService.getAllTasks()).thenReturn(List.of(info));
 
@@ -45,7 +54,8 @@ class TaskControllerTest {
     @Test
     void getTaskById_returnsTaskInfo() {
         TaskInfo info = new TaskInfo(
-            createTask(2L, "Title2", "Desc2", Status.COMPLETED, LocalDateTime.now(), LocalDateTime.now())
+            createTask(
+                2L, "Title2", "Desc2", Status.COMPLETED, LocalDateTime.now(), LocalDateTime.now())
         );
         when(taskService.getTaskById(2L)).thenReturn(Optional.of(info));
 
@@ -70,8 +80,10 @@ class TaskControllerTest {
 
     @Test
     void createTask_returnsNewId() {
-        TaskRequest req = new TaskRequest("Title", "Desc", "pending", LocalDateTime.now());
-        when(taskService.createTask(anyString(), anyString(), any(Status.class), any(LocalDateTime.class))).thenReturn(10L);
+        TaskRequest req = new TaskRequest(
+            "Title", "Desc", "pending", LocalDateTime.now());
+        when(taskService.createTask(
+            anyString(), anyString(), any(Status.class), any(LocalDateTime.class))).thenReturn(10L);
 
         var response = taskController.createTask(req);
 
@@ -82,13 +94,15 @@ class TaskControllerTest {
 
     @Test
     void updateTask_returnsSuccess() {
-        TaskRequest req = new TaskRequest("Title", "Desc", "completed", LocalDateTime.now());
+        TaskRequest req = new TaskRequest(
+            "Title", "Desc", "completed", LocalDateTime.now());
 
         var response = taskController.updateTask(5L, req);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Task updated successfully", response.getBody());
-        verify(taskService).updateTask(anyLong(), anyString(), anyString(), any(Status.class), any(LocalDateTime.class));
+        verify(taskService).updateTask(
+            anyLong(), anyString(), anyString(), any(Status.class), any(LocalDateTime.class));
     }
 
     @Test
@@ -97,7 +111,8 @@ class TaskControllerTest {
         var dueDate = LocalDateTime.now();
         TaskRequest req = new TaskRequest("Title", "Desc", "completed", dueDate);
 
-        doThrow(TaskNotFoundException.class).when(taskService).updateTask(5L, "Title", "Desc", Status.COMPLETED, dueDate);
+        doThrow(TaskNotFoundException.class)
+            .when(taskService).updateTask(5L, "Title", "Desc", Status.COMPLETED, dueDate);
         var response = taskController.updateTask(5L, req);
 
         verify(taskService).updateTask(5L, "Title", "Desc", Status.COMPLETED, dueDate);
@@ -115,7 +130,12 @@ class TaskControllerTest {
     }
 
     // Helper to create tasks
-    private Task createTask(Long id, String title, String desc, Status status, LocalDateTime due, LocalDateTime created) {
+    private Task createTask(Long id,
+                            String title,
+                            String desc,
+                            Status status,
+                            LocalDateTime due,
+                            LocalDateTime created) {
         return Task
             .builder()
             .id(id)
