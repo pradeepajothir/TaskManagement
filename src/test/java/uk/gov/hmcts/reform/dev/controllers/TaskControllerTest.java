@@ -114,7 +114,7 @@ class TaskControllerTest {
         verify(taskService).deleteTask(7L);
     }
 
-    // Helper to creaye tasks
+    // Helper to create tasks
     private Task createTask(Long id, String title, String desc, Status status, LocalDateTime due, LocalDateTime created) {
         return Task
             .builder()
